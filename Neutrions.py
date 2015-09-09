@@ -6,6 +6,9 @@ from sklearn import svm
 from sklearn import preprocessing
 
 def getdata():
+    """
+    load data from file "Neutrino.txt"
+    """
     datax = numpy.genfromtxt("Neutrino.txt", usecols = (0,1,2))
     datay = numpy.genfromtxt("Neutrino.txt", usecols = (3), dtype = 'str')
     datacolor = []
@@ -18,12 +21,21 @@ def getdata():
     return datax, datay, datacolor
 
 def Plot3D(datax, datacolor):
+    """
+    given a set of 3D (x,y,z) ordinates and color, make a scatter plot.
+    
+    datax: numpy.ndarray
+    datacolor: list
+    """
     fig = pylab.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(datax[:,0], datax[:,1], datax[:,2], c = datacolor, s = 100)
     pylab.show()
 
 def PCARotation(datax, datay, rotatewith):
+    """
+    rotate track and shower coordinates with respect to the major directions of track particles.
+    """
     pca = PCA(n_components=3)
     feature1 = datax[datay == rotatewith,:]
     feature2 = datax[datay != rotatewith,:]
@@ -31,6 +43,9 @@ def PCARotation(datax, datay, rotatewith):
     return pca.transform(feature1), pca.transform(feature2)
 
 def Preprocessdata(d1, d2):
+    """
+    discard some data when z is smaller than -0.8. then remove the z coordinates.
+    """
     d2 = d2[d2[:,2] > -0.8,:]
     d = numpy.vstack((d1,d2))
     t = numpy.empty(d.shape[0])
@@ -39,6 +54,9 @@ def Preprocessdata(d1, d2):
     return d[:,:2], t
 
 def Plot2DwSVM(datax, datay):
+    """
+    plot data and corresponding SVM results.
+    """
     clf = svm.SVC()
     clf.fit(datax, datay)
     step = 0.02
